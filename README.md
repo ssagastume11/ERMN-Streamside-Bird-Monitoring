@@ -43,79 +43,73 @@ bird_data <- read_csv("ERMN Bird Data Analysis/NPS_ERMN_StreamsideBirdProtocol_2
 
 ## 🧹 Process
 
+Data cleaning included:
+- Remove missing or duplicate observations
+– Converting date and time fields
+- Filtering observations with full species IDs
+- Merging habitat, climate, and bird count data
+
 ```{r}
-# Clean and merge datasets
-ROMOFish_TroutData_SurveyEvent <- ROMOFish_TroutData_SurveyEvent %>%
-  mutate(eventDate = ymd(startDate), year = year(eventDate))
-
-trout_data <- ROMOFish_TroutData_Occurrence %>%
-  left_join(ROMOFish_TroutData_SurveyEvent, by = "eventID") %>%
-  left_join(ROMOFish_TroutData_Taxon, by = "taxonID")
-
-# Filter clean biological records
-trout_data_clean <- trout_data %>%
-  filter(!is.na(length) & !is.na(mass) & length > 0 & mass > 0) %>%
-  mutate(length_category = cut(length,
-                               breaks = c(0, 100, 200, 300, 400),
-                               labels = c("0-100mm", "101-200mm", "201-300mm", "301-400mm"),
-                               right = FALSE))
+# Example: Processing start date/time and filtering
+bird_data <- bird_data %>%
+  mutate(start_date = mdy(start_date),
+         year = year(start_date)) %>%
+  filter(!is.na(species_code))
 
 ```
 
 ## 📊 Analyze
 
-![Total Trout by Species and Year](https://raw.githubusercontent.com/ssagastume11/Fisheries-Inventory-Trout-Data-ROMO-2021-2022/refs/heads/main/Total%20Trout%20by%20Species.png)
+![Total Bird Detections Per Year](https://raw.githubusercontent.com/ssagastume11/ERMN-Streamside-Bird-Monitoring/refs/heads/main/Total_Bird_Detections_Per_Year.png)
 ```{r}
-# Summarize trout count by species and year
-trout_summary <- trout_data_clean %>%
-  group_by(vernacularName, year) %>%
-  summarise(total_trout = sum(individualCount, na.rm = TRUE), .groups = "drop")
+# Total bird count by year
+abundance_trends <- bird_data %>%
+  group_by(year) %>%
+  summarise(total_birds = sum(count, na.rm = TRUE))
 
 # Visualization
-library(ggplot2)
+ggplot(abundance_trends, aes(x = year, y = total_birds)) +
+  geom_line(color = "forestgreen", size = 1.2) +
+  geom_point(size = 2) +
+  labs(title = "Trends in Total Bird Abundance (2011–2022)",
+       x = "Year",
+       y = "Total Bird Count") +
+  theme_minimal() +
+  theme(plot.caption = element_text(hjust = 0.5)) +
+  labs(caption = "Source: National Park Service, ERMN Streamside Bird Monitoring Data 2011–2022")
 
-ggplot(trout_summary, aes(x = factor(year), y = total_trout, fill = vernacularName)) +
-  geom_col(position = "dodge") +
-  labs(
-    title = "Total Trout by Species and Year",
-    x = "Year",
-    y = "Total Count",
-    fill = "Species",
-    caption = "Source: ROMO Trout Data (2021–2022), catalog.data.gov"
-  ) +
-  theme_minimal()
 ```
 
 ---
 
-## 📈 Share
-This report summarizes trends in trout populations post-wildfire using bar charts and grouped summaries.
-* Trout abundance varied significantly between 2021 and 2022.
-* Streams affected by wildfires had trout with reduced average length and weight.
-* Brook Trout appeared most frequently in the dataset.
+## 📣 Share
+This analysis was compiled into an RMarkdown report with online commentary and visualizations to help stakeholders interpret patterns in riparian bird populations. The graphs and data summaries are intended for ecologists, park managers, and policymakers.
 
 ---
 
 # ✅ Act
-
+Translated the findings into actions by summarizing the key trends:
 ```{r}
-# Identify significant changes in trout populations between years
-significant_changes <- trout_summary %>%
-  pivot_wider(names_from = year, values_from = total_trout, values_fill = 0) %>%
-  mutate(change = `2022` - `2021`,
+# Change analysis
+abundance_changes <- abundance_trends %>%
+  arrange(year) %>%
+  mutate(change = total_birds - lag(total_birds),
          trend = case_when(
            change > 0 ~ "Increase",
            change < 0 ~ "Decrease",
            TRUE ~ "No Change"
          ))
 
-# Display results
-print(significant_changes)
+print(abundance_changes)
+
 ```
+This result highlights periods of notable increases or decreases in bird abundance, helping to direct attention to specific years or changes that require ecological interpretation or a management response.
+
 ---
 
 # 💡 Recommendations
-1. **Increase Monitoring Frequency**: Continue yearly sampling to detect ecological changes.
-2. **Focus Restoration Efforts**: Allocate conservation resources to sites where trout numbers are declining.
-3. **Improve Public Engagement**: Share simplified versions of findings with local communities and visitors.
-4. **Protect Sensitive Habitats**: Use this data to identify and protect habitats supporting at-risk trout species.
+1. **Continue Long-Term Monitoring**: Ensure consistency in annual point counts to capture long-term ecosystem shifts.
+2. **Prioritize Habitat Restoration**: Focus restoration efforts in parks or years where bird abundance dropped significantly.
+3. **Engage Local Communities**: Share simplified trends and conservation insights through interpretive materials.
+4. **Explore Climate & Weather Impacts**: Extend analysis to link bird trends to weather patterns or stream flow variability.
+5. **Integrate With Other Monitoring**: Combine bird, vegetation, and hydrological data for a fuller ecosystem picture.
