@@ -1,40 +1,41 @@
-# ERMN-Streamside-Bird-Monitor
+# ERMN-Streamside-Bird-Monitoring
 
-# Fisheries Inventory: Trout Data at Rocky Mountain National Park (2021–2022)
+**Author:** Sergio E. Sagastume  
+**Repository:** [ERMN-Streamside-Bird-Monitoring](https://github.com/ssagastume11/ERMN-Streamside-Bird-Monitoring)
 
 ---
 
 ## 📌 Introduction
-This project analyzes trout population data collected from Rocky Mountain National Park between 2021 and 2022. It aims to understand how wildfire events may have impacted trout population structure, abundance, and associated aquatic ecosystems.
+
+This project analyzes bird monitoring data collected along streamside habitats within the Eastern Rivers and Mountains Network (ERMN) of the U.S. National Park Service between 2011 and 2022. It explores trends in bird abundance, detection variability, and habitat use over time.
 
 ---
 
 ## 🌍 Scenario
-As an aspiring data analyst contributing to wildlife conservation and monitoring initiatives, I explored data collected by the National Park Service. This case study focuses on the ecological effects of the 2020 Cameron Peak and East Troublesome wildfires on fish populations in high-altitude streams.
+
+I am acting as a data analyst supporting ecological monitoring initiatives. The ERMN team is seeking to understand long-term trends in bird populations along stream corridors across six national park units. My work will help identify shifts in avian community structure and guide future conservation strategies.
 
 ---
 
 ## ❓ Ask
 
-### Business Task 
-Determine how recent wildfires influenced trout populations in Rocky Mountain National Park. The analysis investigates trends in trout counts, sizes, and species composition across different sites and years.
+**Business Task:** Identify trends in bird abundance, detection variability, and habitat use near streams from 2011 to 2022 using certified ERMN streamside bird point count data.
 
 ---
 
 ## 📦 Prepare 
-**Dataset:**  Fisheries Inventory, Trout Data, at Rocky Mountain National Park 2021–2022.  
-**Source:** [Catalog.Data.Gov](https://catalog.data.gov/dataset/fisheries-inventory-trout-data-at-rocky-mountain-national-park-2021-2022-open-format-datas)
+**Dataset:**  ERMN Streamside Bird Monitoring Data (2011–2022).  
+**Source:** [Catalog.Data.Gov](https://catalog.data.gov/dataset/ermn-streamside-bird-monitoring-data-2011-2022)
 
 ```{r}
 # Load necessary libraries
 library(tidyverse)
 library(lubridate)
-library(readr)
+library(ggplot2)
+library(scales)
 
-# Load data
-ROMOFish_TroutData_SurveyEvent <- read_csv("Wildfire Impact on Trout/ROMOFish_TroutData_SurveyEvent.csv") 
-ROMOFish_TroutData_Occurrence <- read_csv("Wildfire Impact on Trout/ROMOFish_TroutData_Occurrence.csv")
-ROMOFish_TroutData_Taxon <- read_csv("Wildfire Impact on Trout/ROMOFish_TroutData_Taxon.csv")
+# Load CSV data file
+bird_data <- read_csv("ERMN Bird Data Analysis/NPS_ERMN_StreamsideBirdProtocol_2011_2022_Data_Certified.csv")
 
 ```
 
